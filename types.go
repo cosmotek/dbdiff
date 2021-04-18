@@ -1,5 +1,7 @@
 package dbdiff
 
+import goqu "github.com/doug-martin/goqu/v9"
+
 type DatabaseInfo struct {
 	SchemaName  string      `db:"schemaname"`
 	TableName   string      `db:"tablename"`
@@ -61,3 +63,14 @@ type TableInfo struct {
 }
 
 // select * from information_schema.columns where table_name = ?
+
+func GetTableInfo() {
+	dialect := goqu.Dialect("postgres")
+
+	var fields []TableInfo
+	dialect.
+		From("information_schema.columns").
+		Select(&fields).
+		Where(goqu.C("table_name").Eq(goqu.L(""))).
+		ToSQL()
+}
